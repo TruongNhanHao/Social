@@ -2,7 +2,6 @@ import axios from "axios";
 import { useRef } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import emailjs from "@emailjs/browser";
 export default function Register() {
   const username = useRef();
   const email = useRef();
@@ -25,21 +24,21 @@ export default function Register() {
         const res = await axios.post("/auth/register", user);
         if (res) {
           await axios.post("/notify", { userId: res._id });
-          emailjs
-            .sendForm(
-              "service_hc0p87b",
-              "template_jhu2865",
-              form.current,
-              "LzM6N_dG4m4tDzMOk"
-            )
-            .then(
-              (result) => {
-                console.log(result.text);
-              },
-              (error) => {
-                console.log(error.text);
-              }
-            );
+          // emailjs
+          //   .sendForm(
+          //     "service_hc0p87b",
+          //     "template_jhu2865",
+          //     form.current,
+          //     "LzM6N_dG4m4tDzMOk"
+          //   )
+          //   .then(
+          //     (result) => {
+          //       console.log(result.text);
+          //     },
+          //     (error) => {
+          //       console.log(error.text);
+          //     }
+          //   );
           history.push("/login");
         }
       } catch (err) {

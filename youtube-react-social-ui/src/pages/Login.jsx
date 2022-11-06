@@ -19,7 +19,7 @@ export default function Login() {
     );
   };
   if (currentUser) {
-    history.push("/");
+    history.push("/message");
   }
   return (
     <C>
