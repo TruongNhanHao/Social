@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import ChatOnline from "../components/ChatOnline";
 import Conversation from "../components/Conversation";
 import Topbar from "../components/Topbar";
 import Message from "../components/Message";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import MakeFriend from "../components/MakeFriend";
+import { Cancel, PermMedia } from "@material-ui/icons";
 
 export default function Messenger({ socket }) {
   const [conversations, setConversations] = useState([]);
@@ -16,6 +17,9 @@ export default function Messenger({ socket }) {
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const user = useSelector((state) => state.user?.currentUser);
   const scrollRef = useRef();
+
+  const [file, setFile] = useState(null);
+
   // console.log("user:", user);
   // console.log("currentChat:", currentChat);
   // console.log("messages:", messages);
@@ -26,12 +30,22 @@ export default function Messenger({ socket }) {
 
   useEffect(() => {
     socket.current.on("getMessage", (data) => {
-      console.log(data);
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
+      if (data.type === "file") {
+        setArrivalMessage({
+          sender: data.senderId,
+          text: data.text,
+          img: data.img,
+          filename: data.filename,
+          createdAt: Date.now(),
+        });
+        console.log(data);
+      } else {
+        setArrivalMessage({
+          sender: data.senderId,
+          text: data.text,
+          createdAt: Date.now(),
+        });
+      }
     });
   }, [socket]);
 
@@ -81,15 +95,44 @@ export default function Messenger({ socket }) {
       text: newMessage,
       conversationId: currentChat._id,
     };
-
+    if (file) {
+      const data = new FormData();
+      const fileName = Date.now() + file.name;
+      data.append("name", fileName);
+      data.append("file", file);
+      message.img = fileName;
+      console.log(message);
+      try {
+        await axios.post("/upload", data);
+      } catch (err) {}
+    }
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
-    socket.current.emit("sendMessage", {
-      senderId: user._id,
-      receiverId,
-      text: newMessage,
-    });
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      socket.current.emit("sendMessage", {
+        senderId: user._id,
+        receiverId,
+        text: newMessage,
+        img: file ? reader.result : 1,
+        filename: file ? file.name : 1,
+        type: "file",
+      });
+      socket.emit("send-img");
+    };
+    reader.readAsDataURL(file);
+
+    // socket.current.emit("sendMessage", {
+    //   senderId: user._id,
+    //   receiverId,
+    //   text: newMessage,
+    //   // img: file ? URL.createObjectURL(file) : 1,
+    //   img: file ? file : 1,
+    //   filename: file ? file.name : 1,
+    //   type: "file",
+    // });
+    setFile();
     console.log(message, receiverId);
 
     try {
@@ -131,11 +174,40 @@ export default function Messenger({ socket }) {
                   ))}
                 </Top>
                 <Bottom>
+                  <div>
+                    <PermMedia htmlColor="tomato" className="shareIcon" />
+                    <span style={{ cursor: "pointer" }}>Photo or Video</span>
+                    <input
+                      style={{
+                        position: "absolute",
+                        opacity: "0",
+                        width: "100px",
+                        cursor: "pointer",
+                      }}
+                      type="file"
+                      id="file"
+                      accept=".png,.jpeg,.jpg"
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                  </div>
                   <textarea
                     placeholder="write something..."
                     onChange={(e) => setNewMessage(e.target.value)}
                     value={newMessage}
                   ></textarea>
+                  {file && (
+                    <ShareImg>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt=""
+                        className="shareImg"
+                      />
+                      <Cancel
+                        className="shareCancelImg"
+                        onClick={() => setFile(null)}
+                      />
+                    </ShareImg>
+                  )}
                   <button onClick={handleSubmit}>Send</button>
                 </Bottom>
               </>
@@ -147,13 +219,7 @@ export default function Messenger({ socket }) {
           </ChatBoxWrapper>
         </ChatBox>
         <ChatOnlineStyled>
-          <div className="h">
-            <ChatOnline
-              onlineUsers={onlineUsers}
-              currentId={user._id}
-              setCurrentChat={setCurrentChat}
-            />
-          </div>
+          <MakeFriend />
         </ChatOnlineStyled>
       </Wrapper>
     </>
@@ -225,5 +291,23 @@ const ChatOnlineStyled = styled.div`
     .message.own {
       align-items: flex-end;
     }
+  }
+`;
+const ShareImg = styled.div`
+  padding: 0 20px 10px 20px;
+  position: relative;
+  width: 200px;
+  height: 100%;
+  .shareImg {
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+  }
+  .shareCancelImg {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    cursor: pointer;
+    opacity: 0.7;
   }
 `;

@@ -12,6 +12,7 @@ const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const commentRoute = require("./routes/comments");
 const notifyRoute = require("./routes/notify");
+const confirmRoute = require("./routes/confirm");
 //tai
 const path = require("path");
 const cors = require("cors");
@@ -57,6 +58,7 @@ app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/comment", commentRoute);
 app.use("/api/notify", notifyRoute);
+app.use("/api/confirm", confirmRoute);
 
 app.listen(8080, () => {
   console.log("Backend server is running!");

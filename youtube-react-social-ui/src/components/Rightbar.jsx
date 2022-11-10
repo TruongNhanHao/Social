@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { FOLLOW, UNFOLLOW } from "../context/userSlice";
 import ChatOnline from "./ChatOnline";
+import MakeFriend from "./MakeFriend";
 
 export default function Rightbar({ user, socket }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -71,7 +72,7 @@ export default function Rightbar({ user, socket }) {
   const HomeRightbar = () => {
     return (
       <Home>
-        <div className="item">
+        {/* <div className="item">
           <span>Có thể bạn quen</span>
           {maybe?.map((item, index) => (
             <div className="user" key={index}>
@@ -81,11 +82,11 @@ export default function Rightbar({ user, socket }) {
               </div>
               <div className="buttons">
                 <button>Kết bạn</button>
-                <button>Theo dõi</button>
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
+        <MakeFriend />
         <div className="online">
           <Title>Online Friends</Title>
           <div className="m">

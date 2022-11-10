@@ -12,11 +12,10 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat }) {
       const res = await axios.get("/users/friends/" + currentId);
       setFriends(res.data);
     };
-  getFriends();;
+    getFriends();
   }, [currentId]);
 
   useEffect(() => {
-
     setOnlineFriends(friends.filter((f) => onlineUsers.includes(f._id)));
   }, [friends, onlineUsers]);
 
@@ -33,6 +32,7 @@ export default function ChatOnline({ onlineUsers, currentId, setCurrentChat }) {
 
   return (
     <Wrapper>
+      <span>Đang online</span>
       {onlineFriends.map((o, index) => (
         <ChatOnlineFriend key={index} onClick={() => handleClick(o)}>
           <Container>

@@ -19,6 +19,7 @@ const removeUser = (socketId) => {
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId);
 };
+
 io.on("connection", (socket) => {
   //when ceonnect
   console.log("a user connected.");
@@ -30,14 +31,27 @@ io.on("connection", (socket) => {
   });
 
   //send and get message
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    const user = getUser(receiverId);
-    io.to(user.socketId).emit("getMessage", {
-      senderId,
-      text,
-    });
-    console.log(senderId, receiverId, text);
-  });
+  socket.on(
+    "sendMessage",
+    ({ senderId, receiverId, text, img, filename, type }) => {
+      const user = getUser(receiverId);
+      if (img === 1) {
+        io.to(user.socketId).emit("getMessage", {
+          senderId,
+          text,
+        });
+      } else {
+        io.to(user.socketId).emit("getMessage", {
+          senderId,
+          text,
+          img,
+          filename,
+          type,
+        });
+      }
+      console.log(senderId, receiverId, text);
+    }
+  );
 
   socket.on(
     "sendNotification",

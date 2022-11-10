@@ -21,24 +21,24 @@ function App() {
   return (
     <Router>
       <Switch>
-        {/* <Route exact path="/">
+        <Route exact path="/">
           {user ? <Home socket={socket} /> : <Register />}
-        </Route> */}
+        </Route>
         <Route path="/">
           {user ? <Messenger socket={socket} /> : <Login />}
         </Route>
         <Route path="/register">
           <Register />
         </Route>
-        {/* <Route path="/messenger">
+        <Route path="/messenger">
           {user ? <Messenger socket={socket} /> : <Register />}
-        </Route> */}
-        {/* <Route path="/profile/:username">
+        </Route>
+        <Route path="/profile/:username">
           <Profile socket={socket} />
         </Route>
         <Route path="/posts/:postId">
           <PostPage socket={socket} />
-        </Route> */}
+        </Route>
       </Switch>
     </Router>
   );

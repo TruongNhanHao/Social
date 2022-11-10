@@ -39,6 +39,7 @@ export default function Share() {
       window.location.reload();
     } catch (err) {}
   };
+  console.log(file && URL.createObjectURL(file));
   return (
     <Wrapper>
       <div className="h">
