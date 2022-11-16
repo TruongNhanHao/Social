@@ -55,6 +55,7 @@ export default function MakeFriend() {
       console.log(error);
     }
   };
+  
   const handleClickConFirm = async (id, senderId, receiverId) => {
     console.log(id, receiverId);
     const newConversations = {

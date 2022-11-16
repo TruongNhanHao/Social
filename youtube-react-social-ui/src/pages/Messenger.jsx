@@ -109,29 +109,29 @@ export default function Messenger({ socket }) {
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
-    const reader = new FileReader();
-    reader.onloadend = function () {
-      socket.current.emit("sendMessage", {
-        senderId: user._id,
-        receiverId,
-        text: newMessage,
-        img: file ? reader.result : 1,
-        filename: file ? file.name : 1,
-        type: "file",
-      });
-      socket.emit("send-img");
-    };
-    reader.readAsDataURL(file);
+    // const reader = new FileReader();
+    // reader.onloadend = function () {
+    //   socket.current.emit("sendMessage", {
+    //     senderId: user._id,
+    //     receiverId,
+    //     text: newMessage,
+    //     img: file ? reader.result : 1,
+    //     filename: file ? file.name : 1,
+    //     type: "file",
+    //   });
+    //   socket.emit("send-img");
+    // };
+    // reader.readAsDataURL(file);
 
-    // socket.current.emit("sendMessage", {
-    //   senderId: user._id,
-    //   receiverId,
-    //   text: newMessage,
-    //   // img: file ? URL.createObjectURL(file) : 1,
-    //   img: file ? file : 1,
-    //   filename: file ? file.name : 1,
-    //   type: "file",
-    // });
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessage,
+      // img: file ? URL.createObjectURL(file) : 1,
+      img: file ? file : 1,
+      filename: file ? file.name : 1,
+      type: "file",
+    });
     setFile();
     console.log(message, receiverId);
 
