@@ -16,8 +16,8 @@ export default function MakeFriend() {
       if (conf) {
         setMaybe(
           res.data
-            .filter((x) => !currentUser.followings.includes(x._id))
             .filter((x) => conf.some((y) => x._id !== y.senderId))
+            .filter((x) => !currentUser.followings.includes(x._id))
             .filter((x) => x._id !== currentUser._id)
         );
       } else {
@@ -55,7 +55,7 @@ export default function MakeFriend() {
       console.log(error);
     }
   };
-  
+
   const handleClickConFirm = async (id, senderId, receiverId) => {
     console.log(id, receiverId);
     const newConversations = {
